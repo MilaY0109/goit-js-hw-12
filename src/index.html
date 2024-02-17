@@ -10,19 +10,19 @@
 </head>
 
 <body>
+
+
   <form class="search-form">
-    <input class="input" type="text" name="input" placeholder="Search images" />
-    <button class="button" type="submit">Search</button>
+    <input type="text" class="search-input" name="query" placeholder="Search images" />
+    <button type="submit" class="search-btn">Search</button>
   </form>
-  <span class="loader hide"></span>
+  <span class="loader hidden"></span>
 
-  <div class="wrapper-pictures">
-    <ul class="pictures-list"></ul>
-  </div>
-  <button class="button-load" type="btn">Load more</button>
+  <ul class="gallery"></ul>
+
+  <button class="load-more">Load more</button>
+
   <script type="module" src="./main.js"></script>
-
-
 
 
 </body>

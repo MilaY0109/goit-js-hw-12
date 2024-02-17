@@ -1,158 +1,101 @@
-// import iziToast from 'izitoast';
-// import 'izitoast/dist/css/iziToast.min.css';
-// import SimpleLightbox from 'simplelightbox';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
-// import axios from 'axios';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import { renderGallery } from './js/render-functions.js';
+import { getGallery } from './js/pixabay-api.js';
 
-// const form = document.querySelector('.search-form');
-// const list = document.querySelector('.pictures-list');
-// const loader = document.querySelector('.loader');
-// const loadBtn = document.querySelector('.button-load');
+const form = document.querySelector('.search-form');
+const galleryList = document.querySelector('.gallery');
+const loader = document.querySelector('.loader');
+const loadMoreBtn = document.querySelector('.load-more');
+let currentPage = 1;
+let query = '';
+let totalPages = 0;
+const perPage = 15;
 
-// const lightbox = new SimpleLightbox('.gallery-card a.gallary-card-link', {
-//   captionsData: 'alt',
-//   captionDelay: 250,
-// });
+loadMoreBtn.classList.add('hidden');
+form.addEventListener('submit', onFormSubmit);
+loadMoreBtn.addEventListener('click', onLoadMore);
 
-// let search = null;
-// let totalResult = 0;
+async function onFormSubmit(event) {
+  event.preventDefault();
 
-// form.addEventListener('submit', e => {
-//   e.preventDefault();
-//   let searchImg = e.target.elements.input.value;
-//   search = searchImg;
-//   page = 1;
+  galleryList.innerHTML = '';
+  query = event.target.elements.query.value.trim();
 
-//   if (search.trim('') === '') {
-//     return;
-//   }
+  if (query === '') {
+    showNotification('Please enter a search query!');
+    return;
+  }
 
-//   loader.style.display = 'flex';
+  loader.classList.remove('hidden');
+  currentPage = 1;
 
-//   if (lightbox) {
-//     lightbox.close();
-//     list.innerHTML = '';
-//   }
+  try {
+    const data = await getGallery(query, currentPage);
+    totalPages = Math.ceil(data.totalHits / perPage);
+    loadMoreBtn.classList.remove('hidden');
+    handleGalleryResponse(data);
+  } catch (error) {
+    console.error(error);
+    showNotification('Failed to fetch images');
+  } finally {
+    loader.classList.add('hidden');
+  }
+}
 
-//   setTimeout(() => {
-//     getImg()
-//       .then(data => {
-//         totalResult = data.totalHits;
-//         render(data.hits);
-//         lightbox.refresh();
-//         if (data.hits.length === 0) {
-//           iziToast.error({
-//             message:
-//               'Sorry, there are no images matching your search query. Please try again!',
-//             position: 'topRight',
-//             backgroundColor: 'red',
-//             messageColor: 'white',
-//           });
-//           loadBtn.disabled = true;
-//           loadBtn.style.display = 'none';
-//           loadBtn.style.opacity = 0;
-//           loadBtn.style.overflow = 'hidden';
-//         } else {
-//           loadBtn.disabled = false;
-//           loadBtn.style.display = 'flex';
-//           loadBtn.style.opacity = 1;
-//           loadBtn.style.overflow = 'visible';
-//         }
-//       })
-//       .catch(error => {
-//         console.error('Помилка отримання зображень:', error);
-//       })
-//       .finally(() => {
-//         loader.style.display = 'none';
-//       });
-//   }, 500);
-//   btnChange();
-//   e.target.reset();
-// });
+async function onLoadMore() {
+  loader.classList.remove('hidden');
+  currentPage++;
 
-// let page = 1;
-// let perPage = 15;
+  try {
+    const data = await getGallery(query, currentPage);
+    handleGalleryResponse(data);
+    smoothScroll();
+  } catch (error) {
+    console.error(error);
+    showNotification('Failed to fetch images');
+  } finally {
+    loader.classList.add('hidden');
+  }
+}
 
-// loadBtn.addEventListener('click', async () => {
-//   page += 1;
-//   const data = await getImg();
-//   render(data.hits);
-//   lightbox.refresh();
-//   btnChange();
+function handleGalleryResponse(data) {
+  if (data.hits.length === 0) {
+    showNotification(
+      'Sorry, there are no images matching your search query. Please try again!'
+    );
+  } else {
+    renderGallery(data);
+  }
 
-//   const galleryCards = document.querySelectorAll('.gallery-card');
-//   galleryCards.forEach(card => {
-//     const cardSize = card.getBoundingClientRect();
-//     window.scrollBy({
-//       top: cardSize.height * 1.36,
-//       behavior: 'smooth',
-//     });
-//   });
-// });
+  if (currentPage >= totalPages) {
+    loadMoreBtn.classList.add('hidden');
+    if (currentPage > totalPages) {
+      showNotification(
+        "We're sorry, but you've reached the end of search results."
+      );
+    }
+  } else {
+    loadMoreBtn.classList.remove('hidden');
+  }
+}
 
-// async function getImg() {
-//   const API_KEY = '42386647-98f841b623ea7dc572c802671';
+function showNotification(message) {
+  iziToast.show({
+    message: message,
+    messageColor: '#fff',
+    backgroundColor: '#FF0000',
+    position: 'topRight',
+  });
+}
 
-//   const params = new URLSearchParams({
-//     key: API_KEY,
-//     per_page: perPage,
-//     page: page,
-//     q: search,
-//     image_type: 'photo',
-//     orientation: 'horizontal',
-//     safesearch: true,
-//   });
-
-//   const response = await axios.get(`https://pixabay.com/api/?${params}`);
-//   return response.data;
-// }
-
-// function btnChange() {
-//   const maxPage = Math.ceil(totalResult / perPage);
-//   if (page === maxPage) {
-//     iziToast.warning({
-//       message: "We're sorry, but you've reached the end of search results.",
-//       position: 'topRight',
-//       backgroundColor: '#add8e6',
-//       messageColor: 'white',
-//     });
-//     loadBtn.disabled = true;
-//     loadBtn.style.display = 'none';
-//     loadBtn.style.opacity = 0;
-//     loadBtn.style.overflow = 'hidden';
-//   }
-// }
-
-// function render(imgs) {
-//   const markup = imgs
-//     .map(img => {
-//       return `<li class="gallery-card">
-//     <a class="gallary-card-link" href="${img.largeImageURL}">
-//         <img src="${img.webformatURL}" alt="${img.tags}" />
-//     <ul class="image-info">
-//             <li class="image-item-info">
-//             <p>Likes</p>
-//             <p>${img.likes}</p>
-//         </li>
-//         <li class="image-item-info">
-//             <p>Views</p>
-//             <p>${img.views}</p>
-//         </li>
-//         <li class="image-item-info">
-//             <p>Comments</p>
-//             <p>${img.comments}</p>
-//         </li>
-//         <li class="image-item-info">
-//             <p>Downloads</p>
-//             <p>${img.downloads}</p>
-//         </li>
-//     </ul>
-//     </a>
-// </li>`;
-//     })
-//     .join('');
-
-//   list.insertAdjacentHTML('beforeend', markup);
-// }
-
-import './js/index';
+function smoothScroll() {
+  const galleryItemHeight =
+    document.querySelector('.gallery-item').offsetHeight;
+  window.scrollBy({
+    top: galleryItemHeight * 2,
+    left: 0,
+    behavior: 'smooth',
+  });
+}

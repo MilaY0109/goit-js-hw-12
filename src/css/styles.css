@@ -25,144 +25,210 @@
 }
 
 
-.loader.hide {
-  display: none;
-}
 
-.loader {
-  width: 48px;
-  height: 48px;
-  border: 5px solid #3c75b1;
-  border-radius: 50%;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-sizing: border-box;
-  animation: pulse 1s linear infinite;
-}
-
-.loader:after {
-  content: '';
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  border: 5px solid #260cb9;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  animation: scaleUp 1s linear infinite;
-}
-
-@keyframes scaleUp {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-  }
-
-  60%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes pulse {
-
-  0%,
-  60%,
-  100% {
-    transform: scale(1);
-  }
-
-  80% {
-    transform: scale(1.2);
-  }
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 .search-form {
+  width: 370px;
+  height: 40px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 32px;
+  margin: 16px auto;
+  gap: 8px;
+  padding: 16px;
 }
 
-.input {
+.search-input {
+  border: 1px solid #808080;
+  border-radius: 4px;
   width: 272px;
   height: 40px;
-  border-radius: 4px;
-  background: #fff;
-  margin-right: 8px;
+  padding-left: 16px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+  outline: transparent;
 }
 
-.button {
-  display: flex;
+.search-input::-moz-placeholder {
+  color: #808080;
+}
+
+.search-input:hover {
+  border: 1px solid #000;
+}
+
+.search-input:focus {
+  border: 1px solid #4e75ff;
+}
+
+.search-btn {
+  border-radius: 8px;
   padding: 8px 16px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 8px;
-  background: #4e75ff;
-  border: transparent;
-  color: #fff;
-  width: 91px;
+  width: 90px;
   height: 40px;
+  border: none;
+  background: #4e75ff;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #fff;
 }
 
-.wrapper-pictures {
+.search-btn:hover {
+  background: #6c8cff;
+}
+
+.gallery {
   display: flex;
+  width: auto;
+  height: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  background-color: #FFF;
+  list-style: none;
 }
 
-.pictures-list {
+.gallery-item {
+  display: block;
+  border: 1px solid black;
+}
+
+
+.gallery-link {
+  display: block;
+  text-decoration: none;
+}
+
+.gallery-image {
+  display: block;
+  width: 360px;
+  height: 220px;
+  flex-shrink: 0;
+  transition: transform 250ms linear;
+}
+
+.gallery-image:hover {
+  transform: scale(1.1);
+}
+
+.gallery-body {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  list-style: none;
+  gap: 16px;
 }
 
-.gallery-card {
-  transition: transform 0.3s;
-  border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-  overflow: hidden;
-}
-
-.image-item-info {
+.info-box {
   display: flex;
   flex-direction: column;
-  text-align: center;
 }
 
-.gallery-card img {
-  object-fit: cover;
-  height: 300px;
-  width: 400px;
+h2 {
+  margin: 0;
 }
 
-.image-info {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 8px 0;
+p {
+  margin: 0;
 }
 
-.button-load {
-  display: none;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 8px;
-  background: #4e75ff;
-  border: transparent;
+.loader {
+  transform: rotateZ(45deg);
+  perspective: 1000px;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
   color: #fff;
-  width: 91px;
-  height: 40px;
-  margin: auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+}
+
+.loader:before,
+.loader:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: inherit;
+  border-radius: 50%;
+  transform: rotateX(70deg);
+  animation: 1s spin linear infinite;
+}
+
+.loader:after {
+  color: #FF3D00;
+  transform: rotateY(70deg);
+  animation-delay: .4s;
+}
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotateZ(360deg);
+  }
+}
+
+@keyframes rotateccw {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes spin {
+
+  0%,
+  100% {
+    box-shadow: .2em 0px 0 0px currentcolor;
+  }
+
+  12% {
+    box-shadow: .2em .2em 0 0 currentcolor;
+  }
+
+  25% {
+    box-shadow: 0 .2em 0 0px currentcolor;
+  }
+
+  37% {
+    box-shadow: -.2em .2em 0 0 currentcolor;
+  }
+
+  50% {
+    box-shadow: -.2em 0 0 0 currentcolor;
+  }
+
+  62% {
+    box-shadow: -.2em -.2em 0 0 currentcolor;
+  }
+
+  75% {
+    box-shadow: 0px -.2em 0 0 currentcolor;
+  }
+
+  87% {
+    box-shadow: .2em -.2em 0 0 currentcolor;
+  }
+}
+
+.hidden {
+  display: none;
   opacity: 0;
-  overflow: hidden;
 }
