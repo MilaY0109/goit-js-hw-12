@@ -71,7 +71,7 @@ function handleGalleryResponse(data) {
 
   if (currentPage >= totalPages) {
     loadMoreBtn.classList.add('hidden');
-    if (currentPage > totalPages) {
+    if (currentPage >= totalPages) {
       showNotification(
         "We're sorry, but you've reached the end of search results."
       );
